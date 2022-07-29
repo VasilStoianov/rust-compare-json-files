@@ -1,8 +1,8 @@
 use std::{
-    collections::HashMap,
+    collections::{HashMap, BTreeMap},
     fs::{self},
     path::Path,
-    str::FromStr,
+    str::FromStr, fmt::Debug,
 };
 
 use serde_json::json;
@@ -10,12 +10,12 @@ use serde_json::json;
 fn main() {
     let path = Path::new("src/common/responses/");
     let path2 = Path::new("src/C9977_SampleTest/responses/");
-    let mut result = HashMap::new();
+    let mut result = BTreeMap::new();
     // take_file_paths(path, &mut path1Files);
     // take_file_paths(path2, &mut path2Files);
     for entry in fs::read_dir(path).expect("Unable to list") {
         let entry = entry.expect("unable to get entry");
-        let  pathfile1 = match entry.path().to_str() {
+        let pathfile1 = match entry.path().to_str() {
             Some(path) => path.to_string(),
             None => String::from_str("no file").unwrap(),
         };
@@ -31,6 +31,9 @@ fn main() {
                 format!("Comparing : {} and {} ", pathfile1, String::from(pathfile2)),
                 are_equals,
             );
+            if are_equals {
+                break;
+            }
         }
 
         // for n in 0..if path1Files.len() > path2Files.len() {
@@ -45,10 +48,10 @@ fn main() {
         //     );
         // }
     }
-    for line in result.into_iter(){
-        println!("{:?}", line);
-    }   
-
+    
+    for line in result.keys() {
+        println!("{:?} {:?}",line,result.get(line).unwrap() );
+    }
 }
 
 fn take_file_paths(path: &Path, vec: &mut Vec<String>) {
