@@ -1,18 +1,31 @@
 use std::{
-    collections::{HashMap, BTreeMap},
+    collections::{BTreeMap},
+    env,
     fs::{self},
     path::Path,
-    str::FromStr, fmt::Debug,
+    str::FromStr
 };
 
 use serde_json::json;
 
 fn main() {
-    let path = Path::new("src/common/responses/");
-    let path2 = Path::new("src/C9977_SampleTest/responses/");
+    let args: Vec<String> = env::args().collect();
+    println!("{:?}",&args);
+    if args.len() > 2 {
+        let path = Path::new(&args[1]);
+        let path2 = Path::new(&args[2]);
+        compare_files(path, path2);
+    }
+    else {
+        let path = Path::new(&args[1]);
+        compare_files(path, path);
+    }
+   
+
+}
+
+fn compare_files(path: &Path, path2: &Path){
     let mut result = BTreeMap::new();
-    // take_file_paths(path, &mut path1Files);
-    // take_file_paths(path2, &mut path2Files);
     for entry in fs::read_dir(path).expect("Unable to list") {
         let entry = entry.expect("unable to get entry");
         let pathfile1 = match entry.path().to_str() {
@@ -36,17 +49,6 @@ fn main() {
             }
         }
 
-        // for n in 0..if path1Files.len() > path2Files.len() {
-        //     path1Files.len()
-        // } else {
-        //     path2Files.len()
-        // } {
-        //     println!(
-        //         "{:?}: {:?} and {:?} are equals: {:?}","comparing files",path1Files.get(n).unwrap(),path2Files.get(n).unwrap(),
-        //         json!(fs::read_to_string(path1Files.get(n).unwrap()).unwrap())
-        //             == json!(fs::read_to_string(path2Files.get(n).unwrap()).unwrap())
-        //     );
-        // }
     }
     
     for line in result.keys() {
